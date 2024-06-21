@@ -1,5 +1,4 @@
-import requests
-import simplejson
+from typing import Optional
 import time
 import os
 import openai
@@ -9,9 +8,16 @@ from utils import LOG
 from openai import OpenAI
 
 class OpenAIModel(Model):
-    def __init__(self, model: str, api_key: str):
+    model: str
+    client: OpenAI
+
+    def __init__(self, model: str, api_key: Optional[str]):
         self.model = model
-        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+        if api_key is None:
+            api_key= os.getenv("OPENAI_API_KEY")
+
+        self.client = OpenAI(api_key=api_key, base_url=os.getenv("OPENAI_API_BASE_URL"))
 
     def make_request(self, prompt):
         attempts = 0
@@ -24,7 +30,10 @@ class OpenAIModel(Model):
                             {"role": "user", "content": prompt}
                         ]
                     )
-                    translation = response.choices[0].message.content.strip()
+                    translation = response.choices[0].message.content
+                    if translation is None:
+                        raise Exception("No response from the model")
+                    translation = translation.strip()
                 else:
                     response = self.client.completions.create(
                         model=self.model,

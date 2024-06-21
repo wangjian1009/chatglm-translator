@@ -1,3 +1,4 @@
+from typing import Optional
 import pandas as pd
 from enum import Enum, auto
 from PIL import Image as PILImage
@@ -9,7 +10,10 @@ class ContentType(Enum):
     IMAGE = auto()
 
 class Content:
-    def __init__(self, content_type, original, translation=None):
+    original: pd.DataFrame
+    translation: Optional[pd.DataFrame]
+    
+    def __init__(self, content_type, original, translation: Optional[pd.DataFrame] =None):
         self.content_type = content_type
         self.original = original
         self.translation = translation
@@ -34,6 +38,7 @@ class Content:
 class TableContent(Content):
     def __init__(self, data, translation=None):
         df = pd.DataFrame(data)
+
 
         # Verify if the number of rows and columns in the data and DataFrame object match
         if len(data) != len(df) or len(data[0]) != len(df.columns):
@@ -63,14 +68,18 @@ class TableContent(Content):
     def __str__(self):
         return self.original.to_string(header=False, index=False)
 
-    def iter_items(self, translated=False):
+    def iter_items(self, translated: bool=False):
         target_df = self.translation if translated else self.original
+        assert target_df is not None, "Translation not available."
+        
         for row_idx, row in target_df.iterrows():
             for col_idx, item in enumerate(row):
                 yield (row_idx, col_idx, item)
 
-    def update_item(self, row_idx, col_idx, new_value, translated=False):
+    def update_item(self, row_idx, col_idx, new_value, translated: bool=False):
         target_df = self.translation if translated else self.original
+        assert target_df is not None, "Translation not available."
+
         target_df.at[row_idx, col_idx] = new_value
 
     def get_original_as_str(self):

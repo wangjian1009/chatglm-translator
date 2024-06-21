@@ -1,10 +1,10 @@
-import os
-from reportlab.lib import colors, pagesizes, units
+from typing import Optional
+from reportlab.lib import colors, pagesizes
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+    SimpleDocTemplate, Paragraph, Table, TableStyle, PageBreak
 )
 
 from book import Book, ContentType
@@ -14,7 +14,7 @@ class Writer:
     def __init__(self):
         pass
 
-    def save_translated_book(self, book: Book, output_file_path: str = None, file_format: str = "PDF"):
+    def save_translated_book(self, book: Book, output_file_path: Optional[str] = None, file_format: str = "PDF"):
         if file_format.lower() == "pdf":
             self._save_translated_book_pdf(book, output_file_path)
         elif file_format.lower() == "markdown":
@@ -22,7 +22,7 @@ class Writer:
         else:
             raise ValueError(f"Unsupported file format: {file_format}")
 
-    def _save_translated_book_pdf(self, book: Book, output_file_path: str = None):
+    def _save_translated_book_pdf(self, book: Book, output_file_path: Optional[str] = None):
         if output_file_path is None:
             output_file_path = book.pdf_file_path.replace('.pdf', f'_translated.pdf')
 
@@ -76,7 +76,7 @@ class Writer:
         doc.build(story)
         LOG.info(f"翻译完成: {output_file_path}")
 
-    def _save_translated_book_markdown(self, book: Book, output_file_path: str = None):
+    def _save_translated_book_markdown(self, book: Book, output_file_path: Optional[str] = None):
         if output_file_path is None:
             output_file_path = book.pdf_file_path.replace('.pdf', f'_translated.md')
 

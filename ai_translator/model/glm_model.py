@@ -19,11 +19,11 @@ class GLMModel(Model):
             response_dict = response.json()
             translation = response_dict["response"]
             return translation, True
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"请求异常：{e}")
         except requests.exceptions.Timeout as e:
             raise Exception(f"请求超时：{e}")
-        except simplejson.errors.JSONDecodeError as e:
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"请求异常：{e}")
+        except simplejson.JSONDecodeError as e:
             raise Exception("Error: response is not valid JSON format.")
         except Exception as e:
             raise Exception(f"发生了未知错误：{e}")
