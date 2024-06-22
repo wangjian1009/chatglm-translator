@@ -2,7 +2,7 @@ OpenAIModel:
   model: "gpt-3.5-turbo"
 
 GLMModel:
-  timeout: 300
+  model: "glm-4"
 
 common:
   book: "tests/test.pdf"

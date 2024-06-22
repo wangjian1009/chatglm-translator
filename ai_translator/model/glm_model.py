@@ -1,30 +1,30 @@
-import requests
-import simplejson
+from typing import Optional
 
 from model import Model
+from zhipuai import ZhipuAI
+from zhipuai.types.chat.chat_completion import Completion
 
 class GLMModel(Model):
-    def __init__(self, model_url: str, timeout: int):
-        self.model_url = model_url
-        self.timeout = timeout
+    model: str
+    client: ZhipuAI
+    
+    def __init__(self, model: str, api_key: Optional[str]):
+        self.model = model
+        self.client = ZhipuAI(api_key=api_key)
 
     def make_request(self, prompt):
-        try:
-            payload = {
-                "prompt": prompt,
-                "history": []
-            }
-            response = requests.post(self.model_url, json=payload, timeout=self.timeout)
-            response.raise_for_status()
-            response_dict = response.json()
-            translation = response_dict["response"]
-            return translation, True
-        except requests.exceptions.Timeout as e:
-            raise Exception(f"请求超时：{e}")
-        except requests.exceptions.RequestException as e:
-            raise Exception(f"请求异常：{e}")
-        except simplejson.JSONDecodeError as e:
-            raise Exception("Error: response is not valid JSON format.")
-        except Exception as e:
-            raise Exception(f"发生了未知错误：{e}")
-        return "", False
+        response: Completion = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            top_p=0.0,
+            stream=False,
+            temperature=0.0,
+            max_tokens=2000,
+        )
+
+        return response.choices[0].message.content, True

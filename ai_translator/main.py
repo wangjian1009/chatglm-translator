@@ -1,3 +1,5 @@
+from asyncio import timeout
+from datetime import time
 import sys
 import os
 from typing import Optional
@@ -27,7 +29,11 @@ if __name__ == "__main__":
         
     model_type = arg_or_config(args.model_type, 'common.model_type')
     if model_type == 'GLMModel':
-        raise NotImplementedError('GLMModel is not implemented yet.')
+        model = arg_or_config(args.glm_model, 'GLMModel.model')
+        if model is None:
+            raise ValueError('GLMModel.model is not specified.')
+        api_key = arg_or_config(args.glm_api_key, 'GLMModel.api_key')
+        model = GLMModel(model=model, api_key=api_key)
     elif model_type == 'OpenAIModel':
         model_name = arg_or_config(args.openai_model, 'OpenAIModel.model')
         if model_name is None:
