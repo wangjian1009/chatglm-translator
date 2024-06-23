@@ -14,15 +14,15 @@ class Writer:
     def __init__(self):
         pass
 
-    def save_translated_book(self, book: Book, output_file_path: Optional[str] = None, file_format: str = "PDF"):
+    def save_translated_book(self, book: Book, output_file_path: Optional[str] = None, file_format: str = "PDF") -> str:
         if file_format.lower() == "pdf":
-            self._save_translated_book_pdf(book, output_file_path)
+            return self._save_translated_book_pdf(book, output_file_path)
         elif file_format.lower() == "markdown":
-            self._save_translated_book_markdown(book, output_file_path)
+            return self._save_translated_book_markdown(book, output_file_path)
         else:
             raise ValueError(f"Unsupported file format: {file_format}")
 
-    def _save_translated_book_pdf(self, book: Book, output_file_path: Optional[str] = None):
+    def _save_translated_book_pdf(self, book: Book, output_file_path: Optional[str] = None) -> str:
         if output_file_path is None:
             output_file_path = book.pdf_file_path.replace('.pdf', f'_translated.pdf')
 
@@ -75,8 +75,9 @@ class Writer:
         # Save the translated book as a new PDF file
         doc.build(story)
         LOG.info(f"翻译完成: {output_file_path}")
+        return output_file_path
 
-    def _save_translated_book_markdown(self, book: Book, output_file_path: Optional[str] = None):
+    def _save_translated_book_markdown(self, book: Book, output_file_path: Optional[str] = None)-> str:
         if output_file_path is None:
             output_file_path = book.pdf_file_path.replace('.pdf', f'_translated.md')
 
@@ -106,3 +107,4 @@ class Writer:
                     output_file.write('---\n\n')
 
         LOG.info(f"翻译完成: {output_file_path}")
+        return output_file_path

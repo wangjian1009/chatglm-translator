@@ -8,7 +8,7 @@ class GLMModel(Model):
     model: str
     client: ZhipuAI
     
-    def __init__(self, model: str, api_key: Optional[str]):
+    def __init__(self, model: str, api_key: Optional[str] = None):
         self.model = model
         self.client = ZhipuAI(api_key=api_key)
 
