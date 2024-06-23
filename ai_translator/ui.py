@@ -19,14 +19,14 @@ def translate(input_file_path, source_language, target_language):
     file_format = "PDF"
     
     translator = PDFTranslator(model)
-    return translator.translate_pdf(input_file_path, file_format)
+    return translator.translate_pdf(input_file_path, file_format, source_language=source_language, target_language=target_language)
     
 demo = gr.Interface(
     fn=translate,
     inputs= [
         gr.File(label="上传 PDF 文件"),
-        gr.Textbox(label="Source Language",placeholder="English",value="English"),
-        gr.Textbox(label="Target Language",placeholder="Chinese",value="Chinese"),
+        gr.Textbox(label="Source Language",placeholder="English"),
+        gr.Textbox(label="Target Language",placeholder="中文"),
     ],
     outputs=[
         gr.File(label="翻译后的 PDF 文件"),
